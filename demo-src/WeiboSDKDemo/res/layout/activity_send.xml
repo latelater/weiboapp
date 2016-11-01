@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/relativeLayout">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            android:weightSum="1.0"
+            android:id="@+id/linearLayout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#555"
+                android:textSize="30dp"
+                android:text="发微博"
+                android:layout_weight="0.1"
+                android:layout_marginTop="8dp"
+                android:id="@+id/textView"
+                android:layout_alignParentLeft="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="18dp"
+                android:textColor="#555"
+                android:text="username"
+                android:id="@+id/user_name"
+                android:layout_weight="0.7" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="Send"
+                android:textColor="#fff"
+                android:layout_marginTop="4dp"
+                android:id="@+id/send"
+                android:background="@drawable/shape"
+                android:layout_weight="0.18" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="5dp"
+            android:layout_below="@+id/linearLayout"
+            android:id="@+id/linearLayout2">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="#999"
+                android:id="@+id/view"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:id="@+id/linearLayout3"
+            android:layout_below="@+id/linearLayout"
+            android:layout_marginLeft="4dp"
+            android:weightSum="1">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="input..."
+                android:enabled="true"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:id="@+id/editText"
+                android:background="@null"
+                android:layout_weight="0.98" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearLayout3">
+            <ImageButton
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:id="@+id/add_image"
+                android:background="@drawable/cg"
+                android:src="@drawable/addimage"
+                android:layout_below="@+id/relativeLayout"
+                android:layout_alignLeft="@+id/relativeLayout" />
+        </LinearLayout>
+    </RelativeLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:baselineAligned="true"
+        android:id="@+id/linearLayout4">
+
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/homerelative"
+            android:layout_weight="1.0"
+            android:layout_gravity="bottom">
+            <ImageButton
+                android:layout_width="25dp"
+                android:layout_height="40dp"
+                android:id="@+id/home_page"
+                android:background="@drawable/home"
+                android:layout_gravity="bottom"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:id="@+id/addrelative"
+            android:layout_gravity="bottom">
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/send_page"
+                android:background="@drawable/close_choose"
+                android:layout_gravity="bottom"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:id="@+id/userrelative"
+            android:layout_gravity="bottom">
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:id="@+id/profile_page"
+                android:background="@drawable/user"
+                android:layout_gravity="bottom"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>
