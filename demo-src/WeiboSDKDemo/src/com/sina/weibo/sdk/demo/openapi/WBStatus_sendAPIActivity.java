@@ -67,6 +67,7 @@ public class WBStatus_sendAPIActivity extends Activity {
         mphotoButton = (ImageButton) findViewById(R.id.add_image);
         msendButton = (Button) findViewById(R.id.send);
 
+        //添加图片
         mphotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -74,6 +75,8 @@ public class WBStatus_sendAPIActivity extends Activity {
                 startActivityForResult(intent,IMAGE);
             }
         });
+
+        //上传
         msendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,7 +130,7 @@ public class WBStatus_sendAPIActivity extends Activity {
             c.moveToFirst();
             int columnIndex = c.getColumnIndex(filePathColumns[0]);
             String imagePath = c.getString(columnIndex);
-            showImage(imagePath);
+            showImage(imagePath);//调用showImage显示图片
             c.close();
         }
     }
@@ -171,6 +174,8 @@ public class WBStatus_sendAPIActivity extends Activity {
             Toast.makeText(WBStatus_sendAPIActivity.this, "请检查网络连接", Toast.LENGTH_LONG).show();
         }
     };
+
+    //发送微博回调函数
     private RequestListener mListener = new RequestListener() {
         @Override
         public void onComplete(String response) {

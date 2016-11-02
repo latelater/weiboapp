@@ -1,6 +1,7 @@
 package com.sina.weibo.sdk.demo.openapi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,22 +33,22 @@ public class user_friends extends Activity implements AdapterView.OnItemClickLis
     private static final String TAG = user_homeActivity.class.getName();
 
     /**
-     * UI Ԫ�أ�ListView
+     * UI 元素：ListView
      */
     private ListView mFuncListView;
     /**
-     * �����б�
+     * 功能列表
      */
     private String[] mFuncList;
     /**
-     * ��ǰ Token ��Ϣ
+     * 当前 Token 信息
      */
     private Oauth2AccessToken mAccessToken;
 
-    /** �û���Ϣ�ӿ� */
+    /** 用户信息接口 */
     private UsersAPI mUsersAPI;
     /**
-     * �û�friends�ӿ�
+     * 用户friends接口
      */
     private FriendshipsAPI mFriendsAPI;
 
@@ -60,13 +61,19 @@ public class user_friends extends Activity implements AdapterView.OnItemClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_friends);
 
-        // ��ȡ��ǰ�ѱ������ Token
+        // 获取当前已保存过的 Token
         mAccessToken = AccessTokenKeeper.readAccessToken(this);
-        // ��ȡ�û���Ϣ�ӿ�
+        // 获取用户信息接口
         mUsersAPI = new UsersAPI(this, Constants.APP_KEY, mAccessToken);
-        //��ȡ�û�friends�ӿ�
+        //获取用户friends接口
         mFriendsAPI = new FriendshipsAPI(this, Constants.APP_KEY, mAccessToken);
         getUserInfo();
+        this.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(user_friends.this, user_homeActivity.class));
+            }
+        });
     }
 
     private void getUserInfo() {
@@ -80,8 +87,8 @@ public class user_friends extends Activity implements AdapterView.OnItemClickLis
     private RequestListener showFriends = new RequestListener(){
         @Override
         public void onComplete(String response) {
-            lv = (ListView) findViewById(R.id.lv);/*����һ����̬����*/
-            ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();/*�������д������*/
+            lv = (ListView) findViewById(R.id.lv);/*定义一个动态数组*/
+            ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();/*在数组中存放数据*/
 
             try {
                 JSONObject arr = new JSONObject(response);
@@ -98,10 +105,7 @@ public class user_friends extends Activity implements AdapterView.OnItemClickLis
                     map.put("followers_description", friends.location);
 //                    map.put("followers_icon", R.drawable.into_icon);
                     listItem.add(map);
-
-
                 }
-
             }
 
             catch (JSONException e) {
@@ -113,13 +117,11 @@ public class user_friends extends Activity implements AdapterView.OnItemClickLis
                     new int[] {R.id.followers_name,R.id.followers_description});
             lv.setAdapter(mSimpleAdapter);
 //            SimpleAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to)
-//            ����context�������ģ�����this������SimpleAdapter���е���ͼ������
-//            ����data��Map�б��б�Ҫ��ʾ�����ݣ��ⲿ����Ҫ�Լ�ʵ�֣��������е�getData()������Ҫ�������һ�£�ÿ����ĿҪ��from��ָ����Ŀһ��
-//            ����resource��ListView������ļ���Id,������־������Զ���Ĳ����ˣ�������ʾʲô���ӵĲ��ֶ�����������С���������б��������to�ж���Ŀؼ�id
-//            ���� from��һ������ӵ�Map�Ϲ���ÿһ����Ŀ�����Ƶ��б�����������������
-//            ���� to����һ��int���飬���������id���Զ��岼���и����ؼ���id����Ҫ�������from��Ӧ
-
-
+//            参数context：上下文，比如this。关联SimpleAdapter运行的视图上下文
+//            参数data：Map列表，列表要显示的数据，这部分需要自己实现，如例子中的getData()，类型要与上面的一致，每条项目要与from中指定条目一致
+//            参数resource：ListView单项布局文件的Id,这个布局就是你自定义的布局了，你想显示什么样子的布局都在这个布局中。这个布局中必须包括了to中定义的控件id
+//            参数 from：一个被添加到Map上关联每一个项目列名称的列表，数组里面是列名称
+//            参数 to：是一个int数组，数组里面的id是自定义布局中各个控件的id，需要与上面的from对应
         }
 
 

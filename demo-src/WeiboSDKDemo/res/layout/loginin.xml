@@ -134,4 +134,14 @@
         android:src="@drawable/ic_logo"
         android:visibility="gone"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="©This app is made by B140413_3"
+        android:textSize="15dp"
+        android:textColor="#777"
+        android:layout_marginTop="100dp"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>

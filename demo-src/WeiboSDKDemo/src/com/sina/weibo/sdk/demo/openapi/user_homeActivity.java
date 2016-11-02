@@ -29,15 +29,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sina.weibo.sdk.WeiboAppManager;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
 import com.sina.weibo.sdk.api.share.WeiboShareSDK;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -45,7 +42,6 @@ import com.sina.weibo.sdk.constant.WBConstants;
 import com.sina.weibo.sdk.demo.AccessTokenKeeper;
 import com.sina.weibo.sdk.demo.Constants;
 import com.sina.weibo.sdk.demo.R;
-import com.sina.weibo.sdk.demo.sharesdk;
 import com.sina.weibo.sdk.demo.user_loginin;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
@@ -53,7 +49,6 @@ import com.sina.weibo.sdk.openapi.LogoutAPI;
 import com.sina.weibo.sdk.openapi.legacy.StatusesAPI;
 import com.sina.weibo.sdk.openapi.UsersAPI;
 import com.sina.weibo.sdk.openapi.models.ErrorInfo;
-import com.sina.weibo.sdk.openapi.models.Status;
 import com.sina.weibo.sdk.openapi.models.User;
 import com.sina.weibo.sdk.utils.LogUtil;
 import com.sina.weibo.sdk.openapi.legacy.ActivityInvokeAPI;
@@ -63,13 +58,12 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 /**
- * 锟斤拷锟斤拷锟斤拷要锟斤拷示锟斤拷锟斤拷锟绞癸拷锟轿拷锟? OpenAPI 锟斤拷锟斤拷取锟斤拷锟斤拷锟斤拷锟捷ｏ拷
- * <li>锟斤拷取锟矫伙拷锟斤拷息
- * <li>通锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷取锟矫伙拷锟斤拷息 
- * <li>锟斤拷锟斤拷锟斤拷取锟矫伙拷锟侥凤拷丝锟斤拷锟斤拷锟斤拷注锟斤拷锟斤拷微锟斤拷锟斤拷 
+ * 该类主要演示了如何使用微博 OpenAPI 来获取以下内容：
+ * <li>获取用户信息
+ * <li>通过个性域名获取用户信息
+ * <li>批量获取用户的粉丝数、关注数、微博数
  *
  * @author SINA
  * @since 2014-04-06
@@ -78,28 +72,22 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
     private static final String TAG = user_homeActivity.class.getName();
 
 
-    /** UI 元锟截ｏ拷ListView */
+    /** UI 元素：ListView */
     private ListView mFuncListView;
-    /** 锟斤拷锟斤拷锟叫憋拷 */
+    /** 功能列表 */
     private String[] mFuncList;
-    /** 锟矫伙拷锟斤拷息锟接匡拷 */
-    private UsersAPI mUsersAPI;
-    /** 锟矫伙拷锟斤拷锟较接匡拷 */
-    private ActivityInvokeAPI mActivityAPI;
-    /** 锟斤拷锟节伙拷取微锟斤拷锟斤拷息锟斤拷锟饺诧拷锟斤拷锟斤拷API */
-    private StatusesAPI mStatusesAPI;
-    /** 娉ㄩ攢鎸夐挳 */
-    private Button mLogoutButton;
-    /** 褰撳墠 Token 淇℃伅 */
+    /** 当前 Token 信息 */
     private Oauth2AccessToken mAccessToken;
-    /** 娉ㄩ攢鎿嶄綔鍥炶皟 */
+    /** 用户信息接口 */
+    private UsersAPI mUsersAPI;
+    /** 用户资料接口 */
+    private ActivityInvokeAPI mActivityAPI;
+    /** 用于获取微博信息流等操作的API */
+    private StatusesAPI mStatusesAPI;
+    /** 注销操作回调 */
     private LogOutRequestListener mLogoutRequestListener = new LogOutRequestListener();
-    /** ????? */
-    private Button          mSharedBtn;
-    /** ??????????????? */
+    /** 微博分享接口实例*/
     private IWeiboShareAPI mWeiboShareAPI = null;
-    /** ????????? **/
-    private WeiboAppManager.WeiboInfo mWeiboInfo;
 
     public static  final String ACTION_SHEAR_RESULT = "extend_third_share_result";
     public static final String SHARE_APP_NAME = "shareAppName";
@@ -117,16 +105,16 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weibo_item);
-        mLogoutButton = (Button) findViewById(R.id.logout);
+        //mLogoutButton = (Button) findViewById(R.id.logout);
 
-        // 锟斤拷取锟斤拷前锟窖憋拷锟斤拷锟斤拷锟? Token
+        // 获取当前已保存过的 Token
         mAccessToken = AccessTokenKeeper.readAccessToken(this);
-        // 锟斤拷取锟矫伙拷锟斤拷息锟接匡拷
+        // 获取用户信息接口
         mUsersAPI = new UsersAPI(this, Constants.APP_KEY, mAccessToken);
         mStatusesAPI = new StatusesAPI(this, Constants.APP_KEY, mAccessToken);
         getUserInfo();
 
-        //搴曢儴瀵艰埅鏍忚烦杞?
+        //底部按钮跳转
         this.findViewById(R.id.home_page).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,22 +127,24 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
                 startActivity(new Intent(user_homeActivity.this, WBStatus_sendAPIActivity.class));
             }
         });
-        //鍒楄〃璺宠浆
+        //列表跳转
+        //关注人
         this.findViewById(R.id.fllowers).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(user_homeActivity.this, user_fllowers.class));
             }
         });
+        //粉丝
         this.findViewById(R.id.friends).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(user_homeActivity.this, user_friends.class));
             }
         });
+        //分享
         mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(this, Constants.APP_KEY);
         mWeiboShareAPI.registerApp();
-
         shearMessageReceiver = new ShearMessageReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SHEAR_RESULT);
@@ -163,25 +153,22 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
             @Override
             public void onClick(View v) {
                     if(!mWeiboShareAPI.isWeiboAppInstalled()){
-                    //    Toast.makeText(this, "", Toast.LENGTH_LONG).show();
+                        Toast.makeText(user_homeActivity.this, "", Toast.LENGTH_LONG).show();
                     }
-                    //???
+                    //显示
                     if(true){
                         Bundle  bundle  = new Bundle();
                         Bitmap  bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo);
                         bundle.putString(WBConstants.SDK_WEOYOU_SHARETITLE, "share our app to others");
                         bundle.putString(WBConstants.SDK_WEOYOU_SHAREDESC, "say something...");
-//                bundle.putString(WBConstants.SDK_WEOYOU_SHAREURL, "http://i2.api.weibo.com/2/short_url/info.json?source=2796559090&url_short=http://t.cn/RUEbk59");
-//                bundle.putString(WBConstants.SDK_WEOYOU_SHAREURL, "http://weibo.com/p/1001603910171175841314");
                         bundle.putString(WBConstants.SDK_WEOYOU_SHAREURL, "http://github/laterlater.com");
                         bundle.putString("shareBackScheme", "weiboDemo://share");
-//                bundle.putString(WBConstants.SDK_WEOYOU_SHARECARDID, "1008085766e60d6825fa86c6923a91bcff6f85");
                         bundle.putString(SHARE_APP_NAME, "app name");
                         bundle.putString(PARAM_SHARE_FROM, EXTEND_SHARE_570);
                         bundle.putByteArray(WBConstants.SDK_WEOYOU_SHAREIMAGE, bitMapToBytes(bitmap));
                         mWeiboShareAPI.shareMessageToWeiyou(user_homeActivity.this, bundle);
                     }else{
-                    //    Toast.makeText(this, "???δ???", Toast.LENGTH_LONG).show();
+                        Toast.makeText(user_homeActivity.this, "微博未安装", Toast.LENGTH_LONG).show();
                     }
             }
         });
@@ -189,12 +176,7 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
             @Override
             public void onClick(View v) {
                 if (mAccessToken != null && mAccessToken.isSessionValid()) {
-                    String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new java.util.Date(mAccessToken.getExpiresTime()));
-                    String format = getString(R.string.weibosdk_demo_token_to_string_format_1);
-                }
-                if (mAccessToken != null && mAccessToken.isSessionValid()) {
                     new LogoutAPI(user_homeActivity.this, Constants.APP_KEY, mAccessToken).logout(mLogoutRequestListener);
-                } else {
                 }
             }
         });
@@ -235,14 +217,12 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
     }
 
     class ShearMessageReceiver extends BroadcastReceiver {
-
-        // ?????????handler  ????
+        // 这里可以用handler处理
         @Override
         public void onReceive(Context context, Intent intent) {
-            //resultCode    ????????0?????1????2?????
-            //actionCode    ????????0??????app??1?????????
-            Bundle bundle = intent.getExtras();
-
+            //resultCode    分享状态：0成功；1失败；2取消；
+            //actionCode    分享完成：0，返回app；1，留在微博
+            Bundle bundle  =   intent.getExtras();
             if (bundle != null) {
                 final int resultCode = bundle.getInt("resultCode", -1);
                 final int actionCode = bundle.getInt("actionCode", -1);
@@ -250,13 +230,13 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
                 String actionStr = "";
                 switch (resultCode) {
                     case 0:
-                        resultStr = "???";
+                        resultStr ="成功";
                         break;
                     case 1:
-                        resultStr = "???";
+                        resultStr ="失败";
                         break;
                     case 2:
-                        resultStr = "???";
+                        resultStr ="取消";
                         break;
                     default:
                         break;
@@ -264,21 +244,18 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
 
                 switch (actionCode) {
                     case 0:
-                        actionStr = "????app";
+                        actionStr ="返回app";
                         break;
                     case 1:
-                        actionStr = "???????";
+                        actionStr ="留在微博";
                         break;
                     default:
                         break;
                 }
-
-
                 final String resultShowStr = resultStr;
-
-                //    Toast.makeText(WBShareToMessageFriendActivity.this, "??????   "+resultShowStr+"  ???????    " + actionStr  , Toast.LENGTH_LONG).show();
+                     Toast.makeText(user_homeActivity.this, "分享结果"+resultShowStr+"操作结果" + actionStr  , Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(user_homeActivity.this, "???????", Toast.LENGTH_LONG).show();
+                Toast.makeText(user_homeActivity.this, "分享失败", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -288,7 +265,7 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
         unregisterReceiver(shearMessageReceiver);
     }
     /**
-     * 娉ㄩ攢鎸夐挳鐨勭洃鍚櫒锛屾帴鏀舵敞閿?澶勭悊缁撴灉銆傦紙API璇锋眰缁撴灉鐨勭洃鍚櫒锛?
+     * 注销按钮的监听器，接收注销处理结果。（API请求结果的监听器）
      */
     private class LogOutRequestListener implements RequestListener {
         @Override
@@ -314,13 +291,13 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
         public void onWeiboException(WeiboException e) {
         }
     }
-    //鏄剧ず鐢ㄦ埛淇℃伅
+    //显示用户信息
     private RequestListener showUser = new RequestListener() {
         @Override
         public void onComplete(String response) {
             if (!TextUtils.isEmpty(response)) {
                 LogUtil.i(TAG, response);
-                // 锟斤拷锟斤拷 User#parse 锟斤拷JSON锟斤拷锟斤拷锟斤拷锟斤拷User锟斤拷锟斤拷
+                // 调用User#parse将JSON串解析成User对象
                 User user = User.parse(response);
 
                 if (user != null) {
@@ -346,6 +323,9 @@ public class user_homeActivity extends Activity implements OnItemClickListener {
 
                     TextView user_name5 = (TextView) findViewById(R.id.user_followers_count);
                     user_name5.setText(String.valueOf(user.followers_count));
+
+                    TextView user_name6 = (TextView) findViewById(R.id.status_conut);
+                    user_name6.setText(String.valueOf(user.statuses_count));
 
                     Log.i("UserStatus", user.status.id);
                     TextView status_text = (TextView) findViewById(R.id.user_status);

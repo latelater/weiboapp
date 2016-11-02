@@ -72,8 +72,6 @@
         <activity android:name=".openapi.user_fllowers"/>
         <activity android:name=".openapi.user_friends"/>
 
-        <activity android:name=".sharesdk" />
-
         <activity android:name=".openapi.user_homeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

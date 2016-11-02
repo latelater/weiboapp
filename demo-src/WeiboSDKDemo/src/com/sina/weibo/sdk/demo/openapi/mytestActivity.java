@@ -206,41 +206,51 @@ public class mytestActivity extends Activity {
                     StatusList statuses = StatusList.parse(response);
                     if (statuses != null && statuses.total_number > 0) {
                         Log.i("\"获取微博信息流成功, 条数:", String.valueOf(statuses.statusList.size()));
-                        for (int i = count*10; i<10+count*10; i++) {
-                            te[i % 10] = new test(mycontext);
-                            Log.i("没图：", String.valueOf(i));
-                            name[i % 10] = "\n" + statuses.statusList.get(i).user.name;
-                            text[i % 10] = statuses.statusList.get(i).text;
-                            te[i % 10].setcontent(name[i % 10], text[i % 10]);
-                            te[i % 10].getpicture(statuses.statusList.get(i).user.avatar_large);
-                            if (statuses.statusList.get(i).pic_urls == null) {
-                                l.addView(te[i % 10]);
-                            } else {
-                                te[i % 10].manypic(statuses.statusList.get(i).pic_urls);
-                                l.addView(te[i % 10]);
-                            }
-                            te[i%10].setBackgroundResource(R.drawable.cg);
-                            if (statuses.statusList.get(i).retweeted_status!=null)
-                            {
-                                Log.i("转发","转发");
-                                ti[i % 10] = new test(mycontext);
-                                name[i % 10] = "\n" + statuses.statusList.get(i).retweeted_status.user.name;
-                                text[i % 10] = statuses.statusList.get(i).retweeted_status.text;
-                                ti[i % 10].setcontent(name[i % 10], text[i % 10]);
-                                ti[i % 10].getpicture(statuses.statusList.get(i).retweeted_status.user.avatar_large);
-                                if (statuses.statusList.get(i).retweeted_status.pic_urls== null) {
-                                    Log.i("无图","无图");
-                                    l.addView(ti[i % 10]);
+
+                            for (int i = count * 10; i < 10 + count * 10; i++) {
+                                te[i % 10] = new test(mycontext);
+                                Log.i("没图：", String.valueOf(i));
+                                name[i % 10] = "\n" + statuses.statusList.get(i).user.name;
+                                text[i % 10] = statuses.statusList.get(i).text;
+                                te[i % 10].setcontent(name[i % 10], text[i % 10]);
+                                te[i % 10].getpicture(statuses.statusList.get(i).user.avatar_large);
+                                if (statuses.statusList.get(i).pic_urls == null) {
+                                    l.addView(te[i % 10]);
                                 } else {
-                                    // Log.i("配图",statuses.statusList.get(i).pic_urls.get(0));
-                                    ti[i % 10].manypic(statuses.statusList.get(i).retweeted_status.pic_urls);
-                                    l.addView(ti[i % 10]);
+                                    te[i % 10].manypic(statuses.statusList.get(i).pic_urls);
+                                    l.addView(te[i % 10]);
                                 }
-                                ti[i%10].setBackgroundResource(R.drawable.bg);
+                                te[i % 10].setBackgroundResource(R.drawable.bg);
+                                try {
+                                    if (statuses.statusList.get(i).retweeted_status != null) {
+                                        Log.i("转发", "转发");
+                                        ti[i % 10] = new test(mycontext);
+                                        name[i % 10] = "\n" + statuses.statusList.get(i).retweeted_status.user.name;
+                                        text[i % 10] = statuses.statusList.get(i).retweeted_status.text;
+                                        ti[i % 10].setcontent(name[i % 10], text[i % 10]);
+                                        ti[i % 10].getpicture(statuses.statusList.get(i).retweeted_status.user.avatar_large);
+                                        if (statuses.statusList.get(i).retweeted_status.pic_urls == null) {
+                                            Log.i("无图", "无图");
+                                            l.addView(ti[i % 10]);
+                                        } else {
+                                            // Log.i("配图",statuses.statusList.get(i).pic_urls.get(0));
+                                            ti[i % 10].manypic(statuses.statusList.get(i).retweeted_status.pic_urls);
+                                            l.addView(ti[i % 10]);
+                                        }
+                                        ti[i % 10].setBackgroundResource(R.drawable.cg);
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    TextView delete=new TextView(mycontext);
+                                    delete.setText("抱歉，该条微博已经被删除！");
+                                    l.addView(delete);
+
+                                }
+                                item fengge = new item(mycontext);
+                                l.addView(fengge);
                             }
-                            item fengge=new item(mycontext);
-                            l.addView(fengge);
-                        }
+
                     }
 
                 } else if (response.startsWith("{\"created_at\"")) {

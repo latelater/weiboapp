@@ -1,7 +1,7 @@
 package com.sina.weibo.sdk.demo.openapi;
 
 /**
- * Created by Ò¹Á¹ÈçÃÎ on 2016/10/27.
+ * Created by å¤œå‡‰å¦‚æ¢¦ on 2016/10/27.
  */
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,10 +15,10 @@ public class ImageService {
     public static byte[] getImage(String path) throws IOException {
         URL url = new URL(path);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setRequestMethod("GET");   //ÉèÖÃÇëÇó·½·¨ÎªGET
-        conn.setReadTimeout(5*1000);    //ÉèÖÃÇëÇó¹ıÊ±Ê±¼äÎª5Ãë
-        InputStream inputStream = conn.getInputStream();   //Í¨¹ıÊäÈëÁ÷»ñµÃÍ¼Æ¬Êı¾İ
-        byte[] data = StreamTool.readInputStream(inputStream);     //»ñµÃÍ¼Æ¬µÄ¶ş½øÖÆÊı¾İ
+        conn.setRequestMethod("GET");   //è®¾ç½®è¯·æ±‚æ–¹æ³•ä¸ºGET
+        conn.setReadTimeout(5*1000);    //è®¾ç½®è¯·æ±‚è¿‡æ—¶æ—¶é—´ä¸º5s
+        InputStream inputStream = conn.getInputStream();   //é€šè¿‡è¾“å…¥æµè·å¾—å›¾ç‰‡æ•°æ®
+        byte[] data = StreamTool.readInputStream(inputStream);     //è·å¾—å›¾ç‰‡çš„äºŒè¿›åˆ¶æ•°æ®
         return data;
 
     }
